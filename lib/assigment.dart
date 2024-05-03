@@ -1,139 +1,779 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:smartcampusloginpage/assigmentpage.dart';
+import 'package:smartcampusloginpage/homescreen.dart';
+import 'package:smartcampusloginpage/squrebox.dart';
 
-void main() {
-  runApp(MyApp());
-}
 
-class MyApp extends StatelessWidget {
+class BiologyPage extends StatelessWidget {
+  var isCompleted = true;
+  var secondassignment = true;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {},
-            color: Colors.white,
-          ),
-          title: Text('Assignments'),
-
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.purple], // Blue to violet gradient
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0),
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: height / 4,
+              width: double.infinity,
+              color: Color(0xff6D4DBF),
+              child: Stack(
+                children: [
+                  SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: height / 25,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          topRight: Radius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Biology',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
+                  Positioned(
+                    top: height / 9.9,
+                    left: width / 12,
+                    child: Container(
+                      height: height / 17,
+                      width: height / 17,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Center(
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Assignmentpage(),
+                                  ));
+                            },
+                            child: Icon(Icons.arrow_back_ios,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
+            SizedBox(height: 30),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AssignmentPage1(),));
+              },
+              child: Container(
+                height: 150,
+                width: 400,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Assignment 1',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text('Due April 20, 2024'),
+                    SizedBox(height: 10),
+                    Container(
+                      height: 50,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: isCompleted == true ? Colors.green : Colors.red,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: isCompleted == true
+                            ? Text(
+                          'Completed',
+                          style:
+                          TextStyle(fontSize: 16, color: Colors.white),
+                        )
+                            : Text(
+                          'Pending',
+                          style:
+                          TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 2',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due April 5, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color:
+                      secondassignment == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: secondassignment == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        body: AssignmentPage(),
       ),
     );
   }
 }
 
-class AssignmentPage extends StatelessWidget {
+class EnglishPage extends StatelessWidget {
+  var isCompleted = false;
+  var secondassignment = true;
+  var thirdassignment = true;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Biology',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'March 5, 2024, 11:30 AM',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: 16),
-          Container(
-            color: Colors.grey[300],
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Notes: ',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Questions:',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8),
-          ListTile(
-            title: Text('1) what do you mean by Amoeba?'),
-          ),
-          ListTile(
-            title: Text('2) what is an organism?'),
-          ),
-          SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Text(
-                  'Due Date: March 8, 2024, 11:30 AM',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: height / 4,
+              width: double.infinity,
+              color: Color(0xff6D4DBF),
+              child: Stack(
+                children: [
+                  SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width,
                   ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle completion logic
-                      },
-                      child: Text('Completed'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle pending logic
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[100], // Red color for the pending button
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: height / 25,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          topRight: Radius.circular(100),
+                        ),
                       ),
-                      child: Text('Pending'),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  Center(
+                    child: Text(
+                      'English',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
+                  Positioned(
+                    top: height / 9.9,
+                    left: width / 12,
+                    child: Container(
+                      height: height / 17,
+                      width: height / 18,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Assignmentpage(),
+                                  ));
+                            },
+                            child: Icon(Icons.arrow_back_ios,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 3',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due April 20, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: isCompleted == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: isCompleted == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 2',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due April 5, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color:
+                      secondassignment == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: secondassignment == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 1',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due March 20, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color:
+                      thirdassignment == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: thirdassignment == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ChemistryPage extends StatelessWidget {
+  var isCompleted = false;
+  var secondassignment = true;
+  var thirdassignment = true;
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: height / 4,
+              width: double.infinity,
+              color: Color(0xff6D4DBF),
+              child: Stack(
+                children: [
+                  SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: height / 25,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          topRight: Radius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Chemistry',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
+                  Positioned(
+                    top: height / 9.9,
+                    left: width / 12,
+                    child: Container(
+                      height: height / 17,
+                      width: height / 18,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Assignmentpage(),
+                                  ));
+                            },
+                            child: Icon(Icons.arrow_back_ios,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 3',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due April 20, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: isCompleted == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: isCompleted == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 2',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due April 5, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color:
+                      secondassignment == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: secondassignment == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              height: 150,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Assignment 1',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text('Due March 20, 2024'),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color:
+                      thirdassignment == true ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: thirdassignment == true
+                          ? Text(
+                        'Completed',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      )
+                          : Text(
+                        'Pending',
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Assignmentpage extends StatelessWidget {
+  Assignmentpage({Key? key});
+  List Subjects = [
+    'Biology',
+    'English',
+    'Chemistry',
+  ];
+  List SubjectPages = [BiologyPage(), EnglishPage(), ChemistryPage()];
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          toolbarHeight: 70,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+      ),
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            Container(
+              height: height / 4,
+              width: double.infinity,
+              color: Color(0xff6D4DBF),
+              child: Stack(
+                children: [
+                  SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: height / 25,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          topRight: Radius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Assignment',
+                      style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Positioned(
+                    top: height / 9.9,
+                    left: width / 12,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                      },
+                      child: Container(
+                        height: height / 17,
+                        width: height / 18,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Center(
+                          child: Icon(Icons.arrow_back_ios, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: Subjects.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SubjectPages[index]),
+                        );
+                      },
+                      child: Container(
+                        height: height / 5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              Subjects[index],
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

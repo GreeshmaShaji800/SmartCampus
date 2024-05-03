@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import 'package:smartcampusloginpage/homescreen.dart';
+import 'package:smartcampusloginpage/squrebox.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -10,41 +13,71 @@ void main() {
 class FeePaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Fee Payment', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent, // Set transparent color
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-           color: Colors.indigo
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          Container(
+            height: height / 4,
+            width: double.infinity,
+            color: Color(0xff6D4DBF),
+            child: Stack(
+              children: [
+                SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: height / 25,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(100),
+                        topRight: Radius.circular(100),
+                      ),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    'Fee Payment',
+                    style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Positioned(
+                  top: height / 9.9,
+                  left: width / 12,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder:
+                      (context) => HomePage(),));
+                    },
+                    child: Container(
+                      height: height / 17,
+                      width: height / 18,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Center(
+                          child:
+                          Icon(Icons.arrow_back_ios, color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: [
-          PopupMenuButton(
-            icon: Icon(Icons.more_vert, color: Colors.white),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  child: Text('Details'),
-                  value: 'details',
-                ),
-                PopupMenuItem(
-                  child: Text('Receipts'),
-                  value: 'receipts',
-                ),
-              ];
-            },
-            onSelected: (value) {
-              if (value == 'details') {
-                // Navigate to Details screen
-              } else if (value == 'receipts') {
-                // Navigate to Receipts screen
-              }
-            },
+          Expanded(
+            child: SemesterFeeDetailsPage(),
           ),
         ],
       ),
-      body: SemesterFeeDetailsPage(),
     );
   }
 }
@@ -55,141 +88,174 @@ class SemesterFeeDetailsPage extends StatefulWidget {
 }
 
 class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
-  // Map to store payable amounts for each semester
+  // Map to store payable amounts for each month
   Map<String, int> _payableAmounts = {
-    'Semester 1': 0,
-    'Semester 2': 0,
-    'Semester 3': 0,
-    'Semester 4': 0,
-    'Semester 5': 0,
-    'Semester 6': 0,
+    'June': 0,
+    'July': 0,
+    'August': 0,
+    'September': 0,
+    'October': 0,
+    'November': 0,
+    'December': 0,
+    'January': 0,
+    'February': 0,
+    'March': 0,
   };
 
   // Map to store the selected state of each checkbox
-  Map<String, bool> _selectedSemesters = {
-    'Semester 1': false,
-    'Semester 2': false,
-    'Semester 3': false,
-    'Semester 4': false,
-    'Semester 5': false,
-    'Semester 6': false,
+  Map<String, bool> _selectedMonths = {
+    'June': false,
+    'July': false,
+    'August': false,
+    'September': false,
+    'October': false,
+    'November': false,
+    'December': false,
+    'January': false,
+    'February': false,
+    'March': false,
   };
+
+  int _totalPayableAmount = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Calculate total payable amount for selected semesters
-    int totalPayableAmount = 0;
-    _selectedSemesters.forEach((key, value) {
-      if (value) {
-        totalPayableAmount += _payableAmounts[key] ?? 0;
-      }
-    });
-
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(top: 60.0), // Add space between app bar and table
-      child: Column(
-        children: [
-          Table(
-            border: TableBorder.all(),
-            columnWidths: {
-              0: FixedColumnWidth(50), // Set width of Select column
-              1: FlexColumnWidth(1), // Let Installment column take remaining width
-              2: FlexColumnWidth(1), // Let Total Amount column take remaining width
-              3: FlexColumnWidth(1), // Let Payable Amount column take remaining width
-              4: FixedColumnWidth(120), // Set width of Details column
-            },
-            children: [
-              TableRow(
-                children: [
-                  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Select'))),
-                  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Installment'))),
-                  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Total Amount'))),
-                  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Payable Amount'))),
-                  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Details'))),
-                ],
-              ),
-              for (int i = 0; i < 6; i++)
+      padding: const EdgeInsets.only(top: 60.0, bottom: 20.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Table(
+              border: TableBorder.all(),
+              columnWidths: {
+                0: FixedColumnWidth(50),
+                1: FlexColumnWidth(1),
+                2: FlexColumnWidth(1),
+                3: FlexColumnWidth(1),
+                4: FixedColumnWidth(120),
+              },
+              children: [
                 TableRow(
                   children: [
                     TableCell(
-                      child: Checkbox(
-                        value: _selectedSemesters['Semester ${i + 1}'] ?? false,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _selectedSemesters['Semester ${i + 1}'] = value ?? false;
-                          });
-                        },
-                      ),
-                    ),
-                    TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Semester ${i + 1}'))),
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Select'))),
                     TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(getTotalAmountForSemester('Semester ${i + 1}').toString()),
-                      ),
-                    ),
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Installments'))),
                     TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            _showPayableAmountDialog('Semester ${i + 1}');
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Total Amount'))),
+                    TableCell(
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Payable Amount'))),
+                    TableCell(
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Details'))),
+                  ],
+                ),
+                for (int i = 0; i < _selectedMonths.length; i++)
+                  TableRow(
+                    children: [
+                      TableCell(
+                        child: Checkbox(
+                          value: _selectedMonths.values.toList()[i],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _selectedMonths[_selectedMonths.keys.toList()[i]] =
+                                  value ?? false;
+                              _calculateTotalPayableAmount();
+                            });
                           },
-                          child: Text(_payableAmounts['Semester ${i + 1}'].toString()),
                         ),
                       ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Container(
-                          width: double.infinity, // Make button fill the entire cell horizontally
-                          height: 40, // Set fixed height for button
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _showFeeDetailsDialog('Semester ${i + 1}');
+                      TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child:
+                              Text(_selectedMonths.keys.toList()[i]))),
+                      TableCell(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(getTotalAmountForMonth(
+                              _selectedMonths.keys.toList()[i])
+                              .toString()),
+                        ),
+                      ),
+                      TableCell(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              _showPayableAmountDialog(
+                                  _selectedMonths.keys.toList()[i]);
                             },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white, backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10), // <-- rectangle border radius
-                              ),
-                            ),
-                            child: Text('Details'),
+                            child: Text(
+                                _payableAmounts[_selectedMonths.keys.toList()[i]]
+                                    .toString()),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          SizedBox(height: 20), // Add space between table and total amount
-          Text(
-            'Total Paying Amount: $totalPayableAmount',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20), // Add space between total amount and button
-          ElevatedButton(
-            onPressed: () {
-              // Handle proceed to pay button press
-            },
-            style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue// Set button color to blue
+                      TableCell(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: height/20,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _showFeeDetailsDialog(
+                                    _selectedMonths.keys.toList()[i]);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white, backgroundColor: Color(0xff6D4DBF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text('Details'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
-
-            child: Text('Proceed to Pay'),
-          ),
-        ],
+            SizedBox(height: height/50),
+            Text(
+              'Total Paying Amount: $_totalPayableAmount',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: height/50),
+            ElevatedButton(
+              onPressed: () {
+                // Handle proceed to pay button press
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Color(0xff6D4DBF),
+              ),
+              child: Text('Proceed to Pay'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   // Function to show dialog for entering payable amount
-  void _showPayableAmountDialog(String semester) {
+  void _showPayableAmountDialog(String month) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        int currentAmount = _payableAmounts[month] ?? 0;
         return AlertDialog(
           title: Text('Enter Payable Amount'),
           content: TextField(
@@ -197,7 +263,8 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
             decoration: InputDecoration(labelText: 'Amount'),
             onChanged: (String value) {
               setState(() {
-                _payableAmounts[semester] = int.tryParse(value) ?? 0;
+                _payableAmounts[month] = int.tryParse(value) ?? 0;
+                _calculateTotalPayableAmount(); // Recalculate the total payable amount
               });
             },
           ),
@@ -220,12 +287,25 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     );
   }
 
-  // Function to show dialog with fee details for a semester
-  void _showFeeDetailsDialog(String semester) {
-    Map<String, int> semesterFees = getFeesForSemester(semester);
+  // Function to calculate total payable amount
+  void _calculateTotalPayableAmount() {
+    int totalPayableAmount = 0;
+    _selectedMonths.forEach((month, isSelected) {
+      if (isSelected) {
+        totalPayableAmount += _payableAmounts[month] ?? 0;
+      }
+    });
+    setState(() {
+      _totalPayableAmount = totalPayableAmount;
+    });
+  }
+
+  // Function to show dialog with fee details for a month
+  void _showFeeDetailsDialog(String month) {
+    Map<String, int> monthFees = getFeesForMonth(month);
 
     List<Widget> feeWidgets = [];
-    semesterFees.forEach((feeType, feeAmount) {
+    monthFees.forEach((feeType, feeAmount) {
       feeWidgets.add(
         ListTile(
           title: Text(feeType),
@@ -238,7 +318,7 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Fee Details - $semester'),
+          title: Text('Fee Details - $month'),
           content: SingleChildScrollView(
             child: ListBody(
               children: feeWidgets,
@@ -257,33 +337,61 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     );
   }
 
-  // Function to get total amount for a semester
-  int getTotalAmountForSemester(String semester) {
+  // Function to get total amount for a month
+  int getTotalAmountForMonth(String month) {
     Map<String, Map<String, int>> fees = {
-      'Semester 1': {'Tuition Fee': 25000, 'Admission Fee': 5500, 'Uniform Fee': 3750},
-      'Semester 2': {'Tuition Fee': 26000, 'Computer Fee': 5000, 'Sports Fee': 2000},
-      'Semester 3': {'Tuition Fee': 27000, 'Library Fee': 1500, 'Sports Fee': 2000},
-      'Semester 4': {'Tuition Fee': 28000, 'Lab Fee': 2500},
-      'Semester 5': {'Tuition Fee': 29000, 'Extracurricular Fee': 1000},
-      'Semester 6': {'Tuition Fee': 30000, 'Project Fee': 5000},
+      'June': {
+        'Tuition Fee': 2500,
+        'Admission Fee': 1000,
+        'Uniform Fee': 1500,
+        'Bus Fee': 500
+      },
+      'July': {'Tuition Fee': 2500, 'Sports Fee': 2000, 'Bus Fee': 500},
+      'August': {
+        'Tuition Fee': 2500,
+        'Library Fee': 500,
+        'Bus Fee': 500,
+        'Sports Fee': 500
+      },
+      'September': {'Tuition Fee': 2500, 'Lab Fee': 500, 'Bus Fee': 500},
+      'October': {'PTA Fund': 2500, 'Tuition Fee': 2500, 'Bus Fee': 500},
+      'November': {'Tuition Fee': 2500, 'Lab Fee': 500, 'Bus Fee': 500},
+      'December': {'Tuition Fee': 2500, 'Bus Fee': 500},
+      'January': {'Bus Fee': 500, 'Computer Fee': 1000, 'Tuition Fee': 2500},
+      'February': {'Bus Fee': 500, 'Tuition Fee': 2500},
+      'March': {'Bus Fee': 500, 'Exam Fee': 2500, 'Tuition Fee': 2500},
     };
     int totalAmount = 0;
-    fees[semester]?.forEach((key, value) {
+    fees[month]?.forEach((key, value) {
       totalAmount += value;
     });
     return totalAmount;
   }
 
-  // Function to get fees for a semester
-  Map<String, int> getFeesForSemester(String semester) {
+  // Function to get fees for a month
+  Map<String, int> getFeesForMonth(String month) {
     Map<String, Map<String, int>> fees = {
-      'Semester 1': {'Tuition Fee': 25000, 'Admission Fee': 5500, 'Uniform Fee': 3750},
-      'Semester 2': {'Tuition Fee': 26000, 'Computer Fee': 5000, 'Sports Fee': 2000},
-      'Semester 3': {'Tuition Fee': 27000, 'Library Fee': 1500, 'Sports Fee': 2000},
-      'Semester 4': {'Tuition Fee': 28000, 'Lab Fee': 2500},
-      'Semester 5': {'Tuition Fee': 29000, 'Extracurricular Fee': 1000},
-      'Semester 6': {'Tuition Fee': 30000, 'Project Fee': 5000},
+      'June': {
+        'Tuition Fee': 2500,
+        'Admission Fee': 1000,
+        'Uniform Fee': 1500,
+        'Bus Fee': 500
+      },
+      'July': {'Tuition Fee': 2500, 'Sports Fee': 2000, 'Bus Fee': 500},
+      'August': {
+        'Tuition Fee': 2500,
+        'Library Fee': 500,
+        'Bus Fee': 500,
+        'Sports Fee': 500
+      },
+      'September': {'Tuition Fee': 2500, 'Lab Fee': 500, 'Bus Fee': 500},
+      'October': {'PTA Fund': 2500, 'Tuition Fee': 2500, 'Bus Fee': 500},
+      'November': {'Tuition Fee': 2500, 'Lab Fee': 500, 'Bus Fee': 500},
+      'December': {'Tuition Fee': 2500, 'Bus Fee': 500},
+      'January': {'Bus Fee': 500, 'Computer Fee': 1000, 'Tuition Fee': 2500},
+      'February': {'Bus Fee': 500, 'Tuition Fee': 2500},
+      'March': {'Bus Fee': 500, 'Exam Fee': 2500, 'Tuition Fee': 2500},
     };
-    return fees[semester] ?? {};
+    return fees[month] ?? {};
   }
 }

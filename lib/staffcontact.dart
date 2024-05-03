@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smartcampusloginpage/homescreen.dart';
+import 'package:smartcampusloginpage/squrebox.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactPage extends StatelessWidget {
@@ -7,7 +9,7 @@ class ContactPage extends StatelessWidget {
       'name': 'John Doe',
       'class': 'Mathematics',
       'designation': 'Teacher',
-      'phone': '123-456-7890',
+      'phone': '9633277629',
     },
     {
       'name': 'Jane Smith',
@@ -16,7 +18,7 @@ class ContactPage extends StatelessWidget {
       'phone': '987-654-3210',
     },
     {
-      'name': 'Mahima Nambyar',
+      'name': 'Mahima Nambiar',
       'class': 'Physics',
       'designation': 'Teacher',
       'phone': '9987654320',
@@ -63,7 +65,7 @@ class ContactPage extends StatelessWidget {
       'designation': 'Teacher',
       'phone': '9012345678',
     },
-    // Add more workers as needed
+    // Add more workersn as needed
   ];
 
   void _makePhoneCall(String phoneNumber) async {
@@ -82,55 +84,58 @@ class ContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(130),
-        child: AppBar(
-          centerTitle: true, // Title moved to the center
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-             color: Colors.indigo
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'St George School',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18, // Adjusting the font size
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Text(
-                    'Teaching And non teaching staff contacts',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          title: Text(
-            'Schools Contact',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            height: height/4,
+            width: double.infinity,
+            color: Color(0xff6D4DBF),
+            child: Stack(
+              children: [
+                SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xff7E67D1), height: height, width: width),
+                Align(alignment: Alignment.bottomCenter
+                  ,child: Container(
+                    height: height/35,
+                    width: double.infinity,
+                    decoration: BoxDecoration(color:Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(100),
+                      topRight: Radius.circular(100),
+                    )),
+                  ),
+                ),
+                Positioned(
+                  top: height/10,right: width/3.5,
+                  child: Text('Staff Contact',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
+                    ,fontSize: 25,),),
+                ),
+
+                Positioned(
+                  top: height/11.5,
+                  left: width/18,
+                  child: Container(
+                    height: height/17,
+                    width: height/17,
+                    decoration: BoxDecoration(border: Border.all(
+
+                        color: Colors.grey
+                    ),borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                      },
+
+                        child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+                  ),
+                ),
+              ],
+
+            )
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: workers.length,
@@ -168,18 +173,7 @@ class ContactPage extends StatelessWidget {
                             _makePhoneCall(workers[index]['phone']);
                           },
                         ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.save,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () {
-                            _saveContact(
-                              workers[index]['name'],
-                              workers[index]['phone'],
-                            );
-                          },
-                        ),
+
                       ],
                     ),
                   ),

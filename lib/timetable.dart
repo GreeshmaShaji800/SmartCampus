@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/services.dart';
+import 'package:smartcampusloginpage/homescreen.dart';
+
+import 'squrebox.dart';
 
 void main() {
+  // Lock the orientation to landscape mode
+  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+
   runApp(MyApp());
 }
 
@@ -9,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timetable Schedule',
+      title: 'Class Timetable',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -24,169 +31,117 @@ class TimetablePage extends StatefulWidget {
   _TimetablePageState createState() => _TimetablePageState();
 }
 
-
-
 class _TimetablePageState extends State<TimetablePage> {
-  DateTime? fromDate;
-  DateTime? toDate;
-  List<DateTime> dateList = [];
-
   final List<String> days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  final List<String> periods = ["1st Period", "2nd Period", "3rd Period", "4th Period", "5th Period", "6th period", "7th period", "8th period"];
-  final List<String> subjects = ["Math", "Science", "English", "History", "Art", "Music", "biology", "history", "Art", "biology", "chemistry"];
-
-  @override
-  void initState() {
-    super.initState();
-    fromDate = DateTime.now();
-    toDate = DateTime.now().add(Duration(days: 4));
-    calculateDateList();
-  }
+  final List<String> periods = ["1st Period", "2nd Period", "3rd Period", "4th Period", "5th Period", "6th Period", "7th Period", "8th Period"];
+  final List<String> subjects = ["Math", "Science", "English", "History", "Art", "Music", "Biology", "Chemistry"];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Timetable Schedule'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Select Date Range:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        final selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: fromDate!,
-                          firstDate: DateTime(2000),
-                          lastDate: toDate!,
-                        );
-                        if (selectedDate != null) {
-                          setState(() {
-                            fromDate = selectedDate;
-                            calculateDateList();
-                          });
-                        }
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('From Date'),
-                          SizedBox(width: 5),
-                          Icon(Icons.calendar_month),
-                        ],
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: toDate!,
-                          firstDate: fromDate!,
-                          lastDate: DateTime(2100),
-                        );
-                        if (selectedDate != null) {
-                          setState(() {
-                            toDate = selectedDate;
-                            calculateDateList();
-                          });
-                        }
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('To Date'),
-                          SizedBox(width: 5),
-                          Icon(Icons.calendar_month),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                VerticalDivider(
-                  color: Colors.black,
-                  thickness: 2,
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.indigo),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
 
-                    child: DataTable(
-                      columnSpacing: 20.0,
-                      columns: [
-                        DataColumn(label: Text('Date')),
-                        DataColumn(label: Text('Day/Period')),
-                        for (var period in periods) DataColumn(label: Text(period)),
-                      ],
-                      rows: [
-                        for (int i = 0; i < days.length; i++)
-                          DataRow(
-                            cells: [
-                              DataCell(Text(dateList.isNotEmpty ? formatDate(dateList[i]) : '')), // Display formatted date
-                              DataCell(Text(days[i])), // Populated day names
-                              for (var _ in periods)
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      generateTimetableEntry(),
-                                    ),
-                                  ),
-                                ),
-                            ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(0.20),
+        child: Column(
+          children: [
+            // Top container mimicking the AppBar
+            Container(
+              height: height / 4,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  // SquareBox widget
+                  SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: height / 35,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          topRight: Radius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Class Timetable',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: height/9.9,
+                    left: width/12,
+                    child: Container(
+                      height: height/17,
+                      width: height/18,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(15)
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                        },
+
+                          child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            // Horizontal scrollable DataTable
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+                columnSpacing: 20.0,
+                columns: [
+                  DataColumn(label: Text('Day/Period')),
+                  for (var period in periods) DataColumn(label: Text(period)),
+                ],
+                rows: [
+                  for (int i = 0; i < days.length; i++)
+                    DataRow(
+                      cells: [
+                        DataCell(Text(days[i])), // Populated day names
+                        for (var _ in periods)
+                          DataCell(
+                            Center(
+                              child: Text(
+                                generateTimetableEntry(),
+                              ),
+                            ),
                           ),
                       ],
                     ),
-                  ),
                 ],
-
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
 
   String generateTimetableEntry() {
     var rng = Random();
     var subject = subjects[rng.nextInt(subjects.length)];
     return subject;
-  }
-
-  void calculateDateList() {
-    if (fromDate != null && toDate != null) {
-      dateList.clear();
-      for (var i = 0; i < days.length; i++) {
-        final date = fromDate!.add(Duration(days: i));
-        dateList.add(date);
-      }
-    }
-  }
-
-  String formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().substring(2)}';
   }
 }

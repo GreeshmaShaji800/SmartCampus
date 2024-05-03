@@ -1,6 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:smartcampusloginpage/homescreen.dart';
+import 'package:http/http.dart' as http;
+import 'package:smartcampusloginpage/provider_class.dart';
+import 'package:smartcampusloginpage/tokenclass/tokenpage.dart';
+import 'bottomnavigation.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -8,8 +14,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final Token tokenController = Token();
+  final TextEditingController _emailController = TextEditingController(text: 'anuemmanuel');
+  final TextEditingController _passwordController = TextEditingController(text: "anu123");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isRememberMe = false;
 
@@ -35,15 +42,44 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Login Pressed');
       print('Email: ${_emailController.text}');
       print('Password: ${_passwordController.text}');
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
     }
   }
+  var token;
+  var username;
+  var password;
+  var tenancyname= "sfsetr";
 
+  void logindata(String username,String password)async{
+    var Url='https://sfsetr.smartcampus.co/api/Account/Authenticate';
+    var uri = Uri.parse(Url);
+    var response = await http.post(uri,headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },body: jsonEncode(<String,dynamic>{
+      "UsernameOrEmailAddress": username,
+      "Password": password,
+      "TenancyName": tenancyname,
+    }));
+    if (response.statusCode==200){
+      final tokendata=jsonDecode(response.body);
+      print('************************************* $tokendata ');
+      token = tokendata['result'];
+      print('......................................$token');
+      var Userdatatoken = Provider.of<userprovide>(context,listen: false);
+      Userdatatoken.Token = tokendata['result'];
+
+
+     await Userdatatoken.getProfileData();
+     await Userdatatoken.getProfilepagedata();
+     // await Userdatatoken.getEmaildata();
+
+
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => NavigationBar1(),
+    ));
+  }}
   Widget buildEmail() {
     return SizedBox(
       height: 60,
@@ -52,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: TextInputType.emailAddress,
         style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
-          labelText: 'Email',
+          labelText: 'Username',
           labelStyle: TextStyle(color: Colors.black),
           prefixIcon: Icon(
             Icons.email,
@@ -90,41 +126,37 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildForgotPassBtn() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () => print("Forgot password pressed"),
-        style: TextButton.styleFrom(
-        ),
-        child: Text(
-          'Forgot Password?',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget buildLoginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _submitForm,
-        style: ButtonStyle(
-          backgroundColor:
-          MaterialStateProperty.all<Color>(Colors.indigo),
-        ),
-        child: Center(
-          child: Text(
-            'LOGIN',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+        },
+        child: ElevatedButton(
+          onPressed: () {
+            _submitForm();
+            username=_emailController.text;
+            password=_passwordController.text;
+            logindata(username,password);
+
+
+          },
+          style: ButtonStyle(
+            backgroundColor:
+            MaterialStateProperty.all<Color>(Colors.indigo),
+          ),
+          child: Center(
+            child: Text(
+              'LOGIN',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -145,14 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          TextSpan(
-            text: 'Sign Up',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          )
+
         ]),
       ),
     );
@@ -168,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
             left: 0,
             right: 0,
             child: Container(
-              height: 450,
+              height: 460,
               width: 250,
               padding: EdgeInsets.symmetric(vertical: 100),
               decoration: BoxDecoration(
@@ -176,6 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   image: DecorationImage(image: AssetImage('lib/assets/Parents-pana.png',),fit: BoxFit.fill)
 
               ),
+
               child: Column(
                 children: [
                   Text(
@@ -188,6 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
+
             ),
           ),
           Positioned(
@@ -206,9 +233,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       buildEmail(),
                       SizedBox(height: 40),
                       buildPassword(),
-                      buildForgotPassBtn(),
+
                       buildLoginBtn(),
-                      buildSignUpBtn(),
+
                     ],
                   ),
                 ),

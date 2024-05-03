@@ -1,269 +1,650 @@
-import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:smartcampusloginpage/assigment.dart';
 import 'package:smartcampusloginpage/events.dart';
-import 'package:smartcampusloginpage/examhome.dart';
-import 'package:smartcampusloginpage/fees.dart';
-import 'package:smartcampusloginpage/parentdiary.dart';
+import 'package:smartcampusloginpage/leaveapplication.dart';
 import 'package:smartcampusloginpage/profilpage.dart';
+import 'package:smartcampusloginpage/provider_class.dart';
+import 'package:smartcampusloginpage/squrebox.dart';
 import 'package:smartcampusloginpage/staffcontact.dart';
 import 'package:smartcampusloginpage/timetable.dart';
-
-import 'attendence.dart';
-
-void main() {
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
-  runApp(const MyApp());
-}
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSplashScreen
-      (splash: Image.asset('lib/assets/logo_icon.png') ,
-        nextScreen: Homepage());
-  }
-}
-
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Home page',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: const HomePage(),
-    );
-  }
-}
+import 'package:smartcampusloginpage/widget.dart';
+import 'package:smartcampusloginpage/widget2.dart';
+import 'package:smartcampusloginpage/widget5.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-
-        flexibleSpace: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 50, right: 16, bottom: 2, top: 35),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child:Text(
-                  'ABC Public School',
-                  style: TextStyle(
-
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Handle notification button tap
-              // You can navigate to a notification screen or show a notification panel here
-            },
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: EdgeInsets.zero,
+      backgroundColor: Colors.white,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 150,
-            decoration: BoxDecoration(
-
-              color: Colors.indigo,
-              borderRadius: BorderRadius.only(
-                 bottomRight: Radius.circular(150),
-              ),
-            ),
-            child: Column(
+          Consumer<userprovide>(builder: (context, basicdetails, child) => Container(
+            height: height / 4,
+            width: double.infinity,
+            color: Colors.white,
+            child: Stack(
               children: [
-                const SizedBox(height: 20),
-                ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                  title: Text(
-                    'Anu Emmanuel',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'X A',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      Text(
-                        'Admission No: 22M03',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      Text(
-                        'Roll Number: 12',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      // Add more subtitles as needed
-                    ],
-                  ),
-                  trailing: const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('lib/assets/img.png'),
+                SquareBox(
+                    color1: Color(0xff6D4DBF),
+                    color2: Color(0xff7E67D1),
+                    height: height,
+                    width: width),
+                // SquareBox(color1: Colors.blue, color2: Colors.blue[200]!, height: height, width: width),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: height / 35,
+                    width: double.infinity,
+                    //   color: Colors.white,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100))),
                   ),
                 ),
+                Positioned(
+                  top: height / 12,
+                  left: width / 15,
+                  child: Container(
+                    height: height / 12,
+                    width: height / 12,
+                    //   color: Colors.white,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),image:
+                    DecorationImage(image: AssetImage('lib/assets/img.png'))),
+                  ),
+                ),
+                Positioned(
+                    left: height / 8,
+                    top: height / 11,
+                    child: Text(
+                      basicdetails.Name,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    )),
+                Positioned(
+                    top: height / 8.5,
+                    left: height / 8,
+                    child: Text(
+                      'Batch      :     ${basicdetails.batchname}',
+                      style: TextStyle(color: Colors.white),
+                    )),
+                Positioned(
+                    top: height / 7.3,
+                    left: height / 8,
+                    child: Text(
+                      'Adm No  :     ${basicdetails.Admission}',
+                      style: TextStyle(color: Colors.white),
+                    )),
+
+                Positioned(
+                    top: height / 9,
+                    left: height / 2.6,
+                    child: Icon(
+                      Icons.notifications_none,
+                      color: Colors.white,
+                      size: 28,
+                    ))
               ],
             ),
-
-          ),
-      Container(
-color: Colors.indigo,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(90),
-            ),
-          ),
-          child: GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
+          ),),
+          Row(
             children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(),));
-                },
-                  child: itemHomePage('Profile', Icons.account_circle, Colors.deepOrange)),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => FeePaymentScreen(),));
-                },
-                  child: itemHomePage('Fees', Icons.monetization_on, Colors.blue)),
-              InkWell(
-                 onTap: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => ExamPage(),));
-                 },
-                  child: itemHomePage('Exam', Icons.assignment, Colors.cyan)),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => TimetablePage(),));
-                },
-
-                  child: itemHomePage('Time Table', Icons.book, Colors.blue)),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ParentHome(),));
-                },
-
-                  child: itemHomePage('Parent Diary', Icons.book, Colors.cyanAccent)),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Attendance(),));
-                },
-                  child: itemHomePage('Attendance', Icons.check_circle, Colors.cyan)),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Events(),));
-                },
-                  child: itemHomePage('Events', Icons.event, Colors.purple)),
-              InkWell(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage(),));
-                  },
-                  child: itemHomePage('Contacts', Icons.contact_phone, Colors.green)),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: Text(
+                  'Pending Assignments',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                width: width / 3.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: Text(
+                  'See all',
+                  style: TextStyle(color: Color(0xff6D4DBF)),
+                ),
+              ),
             ],
           ),
-        ),
-      )
+          Container(
+            height: height / 5.3,
+            width: double.infinity,
+            //color: Colors.grey,
+
+            child: CarouselSlider(
+              items: [
+                //1st Image of Slider
+
+                SliderPages(
+                  subject: 'English',
+                  topic: 'Write an essay on Global Warming',
+                  duedate: '06-06-2024',
+                  color1: Color(0xff9F7FEE),
+                  color2: Color(0xff8167D5),
+                ),
+                SliderPages(
+                  subject: 'Maths',
+                  topic: 'Trigonometry',
+                  duedate: '06-06-2024',
+                  color1: Color(0xffFEA0B2),
+                  color2: Color(0xffFB7E9C),
+                ),
+                SliderPages(
+                  subject: 'Science',
+                  topic: 'Thermodynamics',
+                  duedate: '06-06-2024',
+                  color1: Color(0xffA2DBF9),
+                  color2: Color(0xff92D3F1),
+                ),
+
+                //2nd Image of Slider
+              ],
+
+              //Slider Container properties
+              options: CarouselOptions(
+                height: 180.0,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                aspectRatio: 16 / 9,
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enableInfiniteScroll: true,
+                autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                viewportFraction: 1.0,
+              ),
+            ),
+          ),
+          Container(
+            height: height / 4.6,
+            width: double.infinity,
+            //   color: Colors.orange,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 2),
+                  child: Text(
+                    "Parent Diary",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: height / 80,
+                ),
+                Container(
+                  height: height / 5.8, width: double.infinity,
+                  // color: Colors.yellow,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      SizedBox(
+                        width: width / 40,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Assignmentpage(),));
+                        },
+                        child: Container(
+                          height: height / 5.8,
+                          width: height / 5.8,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Stack(
+                            children: [
+                              SquareBox2(
+                                  color1: Color(0xff8167D5),
+                                  color2: Color(0xff9F7FEE),
+                                  size: height / 5.8),
+                              Positioned(
+                                  top: height / 50,
+                                  left: height / 50,
+                                  child: Container(
+                                    height: height / 26,
+                                    width: height / 26,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.assessment,
+                                      color: Color(0xff6D4DBF),
+                                    ),
+                                  )),
+                              Positioned(
+                                  top: height / 14,
+                                  left: width / 22,
+                                  child: Text(
+                                    'Assignment',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  )),
+                              Positioned(
+                                top: height / 9,
+                                left: width / 14,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'View',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 6.0),
+                                      child: Container(
+                                        height: height / 25,
+                                        width: width / 6,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(.2),
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        child: Center(
+                                            child: Text(
+                                              'Now',
+                                            )),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width / 40,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveApplicationForm(),));
+
+                        },
+                        child: Container(
+                          height: height / 5.8,
+                          width: height / 5.8,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Stack(
+                            children: [
+                              SquareBox2(
+                                  color1: Color(0xffFB7E9C),
+                                  color2: Color(0xffFEA0B2),
+                                  size: height / 5.8),
+                              Positioned(
+                                  top: height / 50,
+                                  left: height / 50,
+                                  child: Container(
+                                    height: height / 26,
+                                    width: height / 26,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.queue_play_next,
+                                      color: Color(0xffFB7E9C),
+                                    ),
+                                  )),
+                              Positioned(
+                                  top: height / 14,
+                                  left: width / 22,
+                                  child: Text(
+                                    'Leave',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  )),
+                              Positioned(
+                                top: height / 9,
+                                left: width / 14,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Apply',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 6.0),
+                                      child: Container(
+                                        height: height / 25,
+                                        width: width / 6,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(.2),
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        child: Center(
+                                            child: Text(
+                                              'Now',
+                                            )),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width / 40,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage(),));
+
+                        },
+                        child: Container(
+                          height: height / 5.8,
+                          width: height / 5.8,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Stack(
+                            children: [
+                              SquareBox2(
+                                  color1: Color(0xff92D3F1),
+                                  color2: Color(0xffA2DBF9),
+                                  size: height / 5.8),
+                              Positioned(
+                                  top: height / 50,
+                                  left: height / 50,
+                                  child: Container(
+                                    height: height / 26,
+                                    width: height / 26,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.perm_contact_cal_outlined,
+                                      color: Color(0xff92D3F1),
+                                    ),
+                                  )),
+                              Positioned(
+                                  top: height / 14,
+                                  left: width / 22,
+                                  child: Text(
+                                    'Staff Contacts',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  )),
+                              Positioned(
+                                top: height / 9,
+                                left: width / 14,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'View',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 6.0),
+                                      child: Container(
+                                        height: height / 25,
+                                        width: width / 6,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(.2),
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        child: Center(
+                                            child: Text(
+                                              'Now',
+                                            )),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width / 40,
+                      ),
+                      InkWell(
+                        onTap: () {
+
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => TimetablePage(),));
+                        },
+                        child: Container(
+                          height: height / 5.8,
+                          width: height / 5.8,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Stack(
+                            children: [
+                              SquareBox2(
+                                  color1: Color(0xff8167D5),
+                                  color2: Color(0xff9F7FEE),
+                                  size: height / 5.8),
+                              Positioned(
+                                  top: height / 50,
+                                  left: height / 50,
+                                  child: Container(
+                                    height: height / 26,
+                                    width: height / 26,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.view_timeline_outlined,
+                                      color: Color(0xff6D4DBF),
+                                    ),
+                                  )),
+                              Positioned(
+                                  top: height / 14,
+                                  left: width / 22,
+                                  child: Text(
+                                    'TimeTable',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  )),
+                              Positioned(
+                                top: height / 9,
+                                left: width / 14,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'View',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 6.0),
+                                      child: Container(
+                                        height: height / 25,
+                                        width: width / 6,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(.2),
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        child: Center(
+                                            child: Text(
+                                              'Now',
+                                            )),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            height: height / 10, width: double.infinity,
+            //  color: Colors.purple,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0, left: 15),
+                  child: Text(
+                    'Attendance',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Color(0xff9F7FEE),
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Mon')),
+                      ),
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Color(0xffFEA0B2),
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Tue')),
+                      ),
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Color(0xff9F7FEE),
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Wed')),
+                      ),
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Color(0xff9F7FEE),
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Thu')),
+                      ),
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Fri')),
+                      ),
+                      Container(
+                        height: height / 30,
+                        width: width / 7,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(child: Text('Sat')),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            height: height / 7,
+            width: double.infinity,
+            //    color: Colors.red,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0, left: 15),
+                      child: Text(
+                        'Upcoming Events',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(width: width/2,),
+
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Events(),));
+
+
+                      },
+
+                        child: Icon(Icons.arrow_forward_ios,size: 17,))
+                  ],
+                ),
+                Container(
+                  height: height / 10,
+                  //   color: Colors.yellow,
+                  child: CarouselSlider(
+                    items: [
+                      EventContainer(event: 'Sports Day', date: '01/06/2024', color1:  Color(0xff8167D5), color2:Color(0xff8167D5)),
+                      EventContainer(event: 'Science Exhibition', date: '10/06/2024', color1: Color(0xffFB7E9C), color2: Color(0xffFB7E9C)),
+                      EventContainer(event: 'Arts Day', date: '10/06/2024', color1:  Color(0xff92D3F1), color2:  Color(0xff92D3F1))
+                    ],
+
+                    //Slider Container properties
+                    options: CarouselOptions(
+                      height: 180.0,
+                      enlargeCenterPage: true,
+                      autoPlay: false,
+                      aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: true,
+                      autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                      viewportFraction: 1.0,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          // Handle bottom navigation item tap
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz),
-            label: 'More',
-          ),
-
-        ],
-        unselectedItemColor: Colors.black,
-        showUnselectedLabels: true,
-        selectedItemColor: Colors.indigo,
-
-
       ),
     );
   }
-
-  Widget itemHomePage(String title, IconData iconData, Color background) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: [
-        BoxShadow(
-            offset: const Offset(0, 5),
-            color: Theme.of(context).primaryColor.withOpacity(.2),
-            spreadRadius: 2,
-            blurRadius: 3),
-      ],
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: background,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(iconData, color: Colors.white, size: 30),
-        ),
-        const SizedBox(height: 8),
-        Text(title, style: Theme.of(context).textTheme.subtitle1),
-      ],
-    ),
-  );
 }
