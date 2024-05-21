@@ -1,7 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:smartcampusloginpage/homescreen.dart';
 import 'package:smartcampusloginpage/squrebox.dart';
+
+import 'examhome.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -25,6 +26,8 @@ class FeePaymentScreen extends StatelessWidget {
             color: Color(0xff6D4DBF),
             child: Stack(
               children: [
+
+
                 SquareBox(
                     color1: Color(0xff6D4DBF),
                     color2: Color(0xff7E67D1),
@@ -47,7 +50,7 @@ class FeePaymentScreen extends StatelessWidget {
                 Center(
                   child: Text(
                     'Fee Payment',
-                    style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
                 ),
                 Positioned(
@@ -55,18 +58,16 @@ class FeePaymentScreen extends StatelessWidget {
                   left: width / 12,
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder:
-                      (context) => HomePage(),));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
                     },
                     child: Container(
                       height: height / 17,
                       width: height / 18,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(15)),
+                          borderRadius: BorderRadius.circular(5)),
                       child: Center(
-                          child:
-                          Icon(Icons.arrow_back_ios, color: Colors.white)),
+                          child: Icon(Icons.arrow_back_ios, color: Colors.white)),
                     ),
                   ),
                 ),
@@ -88,7 +89,6 @@ class SemesterFeeDetailsPage extends StatefulWidget {
 }
 
 class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
-  // Map to store payable amounts for each month
   Map<String, int> _payableAmounts = {
     'June': 0,
     'July': 0,
@@ -102,7 +102,6 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     'March': 0,
   };
 
-  // Map to store the selected state of each checkbox
   Map<String, bool> _selectedMonths = {
     'June': false,
     'July': false,
@@ -123,134 +122,162 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(top: 60.0, bottom: 20.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Table(
-              border: TableBorder.all(),
-              columnWidths: {
-                0: FixedColumnWidth(50),
-                1: FlexColumnWidth(1),
-                2: FlexColumnWidth(1),
-                3: FlexColumnWidth(1),
-                4: FixedColumnWidth(120),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    TableCell(
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Select'))),
-                    TableCell(
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Installments'))),
-                    TableCell(
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Total Amount'))),
-                    TableCell(
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Payable Amount'))),
-                    TableCell(
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Details'))),
-                  ],
-                ),
-                for (int i = 0; i < _selectedMonths.length; i++)
-                  TableRow(
+      padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Table(
+                    border: TableBorder.all(),
+                    columnWidths: {
+                      0: FixedColumnWidth(50),
+                      1: FlexColumnWidth(1),
+                      2: FlexColumnWidth(1),
+                      3: FlexColumnWidth(1),
+                      4: FixedColumnWidth(120),
+                    },
                     children: [
-                      TableCell(
-                        child: Checkbox(
-                          value: _selectedMonths.values.toList()[i],
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _selectedMonths[_selectedMonths.keys.toList()[i]] =
-                                  value ?? false;
-                              _calculateTotalPayableAmount();
-                            });
-                          },
-                        ),
-                      ),
-                      TableCell(
-                          child: Padding(
+                      TableRow(
+                        children: [
+                          TableCell(
+                            child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child:
-                              Text(_selectedMonths.keys.toList()[i]))),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(getTotalAmountForMonth(
-                              _selectedMonths.keys.toList()[i])
-                              .toString()),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              _showPayableAmountDialog(
-                                  _selectedMonths.keys.toList()[i]);
-                            },
-                            child: Text(
-                                _payableAmounts[_selectedMonths.keys.toList()[i]]
-                                    .toString()),
+                              child: Text('Select'),
+                            ),
                           ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: height/20,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _showFeeDetailsDialog(
-                                    _selectedMonths.keys.toList()[i]);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white, backgroundColor: Color(0xff6D4DBF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Installments'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Total Amount'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Payable Amount'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Text('Details'),
                             ),
                           ),
-                        ),
+                        ],
                       ),
+                      for (int i = 0; i < _selectedMonths.length; i++)
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Checkbox(
+                                value: _selectedMonths.values.toList()[i],
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _selectedMonths[_selectedMonths.keys
+                                        .toList()[i]] = value ?? false;
+                                    if (value == true) {
+                                      _payableAmounts[
+                                      _selectedMonths.keys.toList()[i]] =
+                                          getTotalAmountForMonth(
+                                              _selectedMonths.keys.toList()[i]);
+                                    } else {
+                                      _payableAmounts[
+                                      _selectedMonths.keys.toList()[i]] = 0;
+                                    }
+                                    _calculateTotalPayableAmount();
+                                  });
+                                },
+                              ),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(_selectedMonths.keys.toList()[i]),
+                              ),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(getTotalAmountForMonth(
+                                    _selectedMonths.keys.toList()[i])
+                                    .toString()),
+                              ),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    _showPayableAmountDialog(
+                                        _selectedMonths.keys.toList()[i]);
+                                  },
+                                  child: Text(_payableAmounts[
+                                  _selectedMonths.keys.toList()[i]]
+                                      .toString()),
+                                ),
+                              ),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: height / 20,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _showFeeDetailsDialog(
+                                          _selectedMonths.keys.toList()[i]);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Color(0xff6D4DBF),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text('Details'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
-              ],
-            ),
-            SizedBox(height: height/50),
-            Text(
-              'Total Paying Amount: $_totalPayableAmount',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: height/50),
-            ElevatedButton(
-              onPressed: () {
-                // Handle proceed to pay button press
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Color(0xff6D4DBF),
+
+                ],
               ),
-              child: Text('Proceed to Pay'),
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: height / 50),
+          Text(
+            'Total Paying Amount: $_totalPayableAmount',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: height / 50),
+          ElevatedButton(
+            onPressed: () {
+              // Handle proceed to pay button press
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Color(0xff6D4DBF),
+            ),
+            child: Text('Proceed to Pay'),
+          ),
+        ],
       ),
     );
   }
 
-  // Function to show dialog for entering payable amount
   void _showPayableAmountDialog(String month) {
     showDialog(
       context: context,
@@ -264,7 +291,7 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
             onChanged: (String value) {
               setState(() {
                 _payableAmounts[month] = int.tryParse(value) ?? 0;
-                _calculateTotalPayableAmount(); // Recalculate the total payable amount
+                _calculateTotalPayableAmount();
               });
             },
           ),
@@ -277,6 +304,10 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
             ),
             TextButton(
               onPressed: () {
+                if (_payableAmounts[month] == 0) {
+                  _payableAmounts[month] = getTotalAmountForMonth(month);
+                  _calculateTotalPayableAmount();
+                }
                 Navigator.of(context).pop();
               },
               child: Text('Save'),
@@ -287,7 +318,6 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     );
   }
 
-  // Function to calculate total payable amount
   void _calculateTotalPayableAmount() {
     int totalPayableAmount = 0;
     _selectedMonths.forEach((month, isSelected) {
@@ -300,7 +330,6 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     });
   }
 
-  // Function to show dialog with fee details for a month
   void _showFeeDetailsDialog(String month) {
     Map<String, int> monthFees = getFeesForMonth(month);
 
@@ -337,7 +366,6 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     );
   }
 
-  // Function to get total amount for a month
   int getTotalAmountForMonth(String month) {
     Map<String, Map<String, int>> fees = {
       'June': {
@@ -368,7 +396,6 @@ class _SemesterFeeDetailsPageState extends State<SemesterFeeDetailsPage> {
     return totalAmount;
   }
 
-  // Function to get fees for a month
   Map<String, int> getFeesForMonth(String month) {
     Map<String, Map<String, int>> fees = {
       'June': {

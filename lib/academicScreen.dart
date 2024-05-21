@@ -98,7 +98,7 @@ class _ProfileState extends State<Profileacademic > {
                     ),
                   ),
                   Center(
-                    child: Text('Academic Details',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold
+                    child: Text('School Details',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold
                         ,color: Colors.white),),
                   ),
                   Positioned(
@@ -126,7 +126,7 @@ class _ProfileState extends State<Profileacademic > {
             ),),
             Expanded(
               child: SingleChildScrollView(
-                child: Container(
+                child:Consumer<userprovide>(builder: (context, academicdata, child) =>  Container(
                   padding: const EdgeInsets.only(left: 15, top: 10, right: 15,),
                   child: GestureDetector(
                     onTap: () {
@@ -146,25 +146,12 @@ class _ProfileState extends State<Profileacademic > {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        buildTextField("Year of Admission", "2023", Icons.school_rounded, false),
-                        buildTextField("Register NO", "19002314", Icons.book, false),
-                        buildTextField("Class", "XA", Icons.school, false),
-                        buildTextField("Roll No", "22", Icons.school_outlined, false),
-                        Visibility(
-                          visible: !showMoreDetails,
-                          child:
-                          buildTextField("Gender", "Female", Icons.people_alt, false),
-                        ),
-                        Visibility(
-                          visible: showMoreDetails,
-                          child: Column(
-                            children: [
-                              buildTextField("Hod Name", "Praveen", Icons.person, false),
-                              buildTextField("Class Teacher Name", "Reji", Icons.person, false),
-                              buildTextField("Academic Year", "2023-2026", Icons.calendar_today, false),
-                            ],
-                          ),
-                        ),
+                        buildTextField("institutionname", academicdata.Institutionname.toString(), Icons.school_outlined, false),
+                        buildTextField("Year of Admission", academicdata.academicyear.toString(), Icons.school_rounded, false),
+                        buildTextField("Register NO", academicdata.batchid.toString(), Icons.book, false),
+                        buildTextField("Class", academicdata.batchname.toString(), Icons.school, false),
+                        buildTextField("Roll No", academicdata.rollno.toString(), Icons.school_outlined, false),
+
                         TextButton(
                           onPressed: () {
                             setState(() {
@@ -179,7 +166,7 @@ class _ProfileState extends State<Profileacademic > {
                       ],
                     ),
                   ),
-                ),
+                ),)
 
               ),
             ),

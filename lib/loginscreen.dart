@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:smartcampusloginpage/controller/eventprovider.dart';
 import 'package:smartcampusloginpage/homescreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartcampusloginpage/provider_class.dart';
@@ -48,6 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
   var username;
   var password;
   var tenancyname= "sfsetr";
+  bool isLoginned=true;
+  bool isLoginSuccess=false;
 
   void logindata(String username,String password)async{
     var Url='https://sfsetr.smartcampus.co/api/Account/Authenticate';
@@ -60,19 +63,35 @@ class _LoginScreenState extends State<LoginScreen> {
       "TenancyName": tenancyname,
     }));
     if (response.statusCode==200){
+      setState(() {
+        isLoginSuccess=true;
+      });
       final tokendata=jsonDecode(response.body);
       print('************************************* $tokendata ');
       token = tokendata['result'];
       print('......................................$token');
       var Userdatatoken = Provider.of<userprovide>(context,listen: false);
+      var eventProvider = Provider.of<EventProvider>(context,listen: false);
       Userdatatoken.Token = tokendata['result'];
 
 
      await Userdatatoken.getProfileData();
      await Userdatatoken.getProfilepagedata();
+
+      await Userdatatoken.getSubjectList();
+
+
+
+      for(int i=0;i<Userdatatoken.subjectModel!.result.length;i++)
+         Userdatatoken.getAssignmentData(
+            Userdatatoken.subjectModel!.result[i].id);
+
      // await Userdatatoken.getEmaildata();
+      await eventProvider.getEventData();
 
-
+      setState(() {
+        isLoginned=eventProvider.isLoginned;
+      });
 
     Navigator.push(
         context,
@@ -136,8 +155,11 @@ class _LoginScreenState extends State<LoginScreen> {
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
         },
-        child: ElevatedButton(
+        child:  (isLoginned!=true && isLoginSuccess==true) ? Center(child: CircularProgressIndicator()):ElevatedButton(
           onPressed: () {
+            setState(() {
+              isLoginned=false;
+            });
             _submitForm();
             username=_emailController.text;
             password=_passwordController.text;

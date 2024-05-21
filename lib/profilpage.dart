@@ -160,11 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     child: IgnorePointer(
                       ignoring: true, // Make non-clickable
-                      child: itemProfile('Academic Details', CupertinoIcons.book),
+                      child: itemProfile('School Details', CupertinoIcons.book),
                     ),
                   ),
-
-
                 ],
               ),
             ),

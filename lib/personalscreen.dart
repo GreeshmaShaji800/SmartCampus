@@ -155,31 +155,13 @@ class _ProfileState extends State<Profile> {
                           buildTextField("Age", personaldata.age.toString(), Icons.person_outline, false),
                           buildTextField("Father name", personaldata.fathername.toString(), Icons.person_outline, false),
                           buildTextField("Mother name", personaldata.mothername.toString(), Icons.person_outline, false),
+                          buildTextField("Father Ph.no", personaldata.fathercontact.toString(), Icons.person_outline, false),
+                          buildTextField("Mother Ph.no", personaldata.Mothercontactno.toString(), Icons.person_outline, false),
                           buildTextField("Adhar no", personaldata.adharno.toString(), Icons.person_outline, false),
-                          buildTextField("Address", personaldata.address.toString(), Icons.person_outline, false),
-                          // buildTextField("Religion", personaldata.religion.toString(), Icons.person, false),
-                          Visibility(
-                            visible: !showMoreDetails,
-                            child:
-                            buildTextField("Gender", "Female", Icons.people_alt, false),
-                          ),
-                          Visibility(
-                            visible: showMoreDetails,
-                            child: Column(
-                              children: [
-                                buildTextField("Gender", "Female", Icons.people_alt, false),
-                                buildTextField("Caste", "Christian", Icons.bookmark, false),
-                                buildTextField("Religion", "RC", Icons.book, false),
-                                buildTextField("Nationality", "Indian", Icons.language, false),
-                                buildTextField("State", "Kerala", Icons.location_city, false),
-                                buildTextField("Address", "Kunnath House", Icons.location_on, false),
-                                buildTextField("Father Name", "Simon", Icons.people, false),
-                                buildTextField("Mother Name", "Sofy", Icons.people, false),
-                                buildTextField("Local Guardian Name", "", Icons.people, false),
-                                buildTextField("Martial Status", "Unmarried", Icons.people, false),
-                              ],
-                            ),
-                          ),
+                          buildTextField("Permanent Address", personaldata.address.toString(), Icons.person_outline, false),
+                          buildTextField("Blood Group", personaldata.bloodgroup.toString(), Icons.person, false),
+
+
                           TextButton(
                             onPressed: () {
                               setState(() {

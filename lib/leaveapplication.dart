@@ -10,8 +10,8 @@ class LeaveApplicationForm extends StatefulWidget {
 }
 
 class _LeaveApplicationFormState extends State<LeaveApplicationForm> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _classController = TextEditingController();
+  TextEditingController _nameController = TextEditingController(text: 'anuemmanuel');
+  TextEditingController _classController = TextEditingController(text:'XA');
   TextEditingController _reasonController = TextEditingController();
   DateTime? _startDate = DateTime.now();
   DateTime? _endDate;
@@ -286,7 +286,7 @@ class NextPage extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: height / 12,
+                    top: height / 10,
                     right: width / 4.5,
                     child: Text(
                       'Leave Status Page',
@@ -381,6 +381,7 @@ class NextPage extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   Center(
                     child: Container(
                       width: width / 5,

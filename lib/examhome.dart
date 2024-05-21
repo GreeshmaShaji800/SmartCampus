@@ -1,54 +1,96 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:smartcampusloginpage/homescreen.dart';
+import 'package:smartcampusloginpage/provider_class.dart';
 import 'package:smartcampusloginpage/squrebox.dart';
+import 'package:http/http.dart' as http;
+import 'Model/exam_model.dart';
+import 'controller/exam_provider.dart';
 
-
-
-
-class ExamPage extends StatelessWidget {
+class ExamPage extends StatefulWidget {
   const ExamPage({Key? key}) : super(key: key);
-
   @override
+  State<ExamPage> createState() => _ExamPageState();
+}
+class _ExamPageState extends State<ExamPage> {
+  @override
+
+  ExamModel? examsList;
+  Future<void> getExamData() async {
+    final userProvider=Provider.of<userprovide>(context,listen: false);
+    final examProvider=Provider.of<ExamProvider>(context,listen: false);
+    var Url = 'https://sfsetr.smartcampus.co/api/services/app/MobileAPI/GetExamMarksSummaryOfStudentForMobileAPI';
+    var uri = Uri.parse(Url);
+    var response = await http.post(uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${userProvider.Token}'
+        },
+        body: jsonEncode(
+            <String, dynamic>{
+              "InstitutionId": "1",
+              "IsCurrentTerm": "true",
+              "BatchId": userProvider.batchid,
+              "StudentId": userProvider.studentId,
+              "AcademicStartDate":"2024/03/01",
+              "AcademicEndDate":"2025/03/31"
+            }));
+    if (response.statusCode == 200) {
+      var examList = jsonDecode(response.body);
+      examProvider.examList=examModelFromJson(response.body);
+      examProvider.Exams=examList;
+      print(examProvider.examList!.result.items[0].examName);
+    }
+  }
+
   Widget build(BuildContext context) {
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
-    return Scaffold(
+    return  Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(
-            height:height/4 ,
+            height: height / 4,
             width: double.infinity,
             color: Color(0xff6D4DBF),
             child: Stack(
               children: [
-                SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xff7E67D1), height: height, width: width),
-                Align(alignment: Alignment.bottomCenter
-                  ,child: Container(
-                    height: height/25,
+                SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xf7E67D1), height: height, width: width),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: height / 35,
                     width: double.infinity,
-                    decoration: BoxDecoration(color:Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(100),
-                      topRight: Radius.circular(100),
-                    )),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(100),
+                        topRight: Radius.circular(100),
+                      ),
+                    ),
+
                   ),
                 ),
-                Center(
-                  child: Text('Exam ',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),),
+                Positioned(
+                  top: height/11,right: width/2.3,
+                  child: Text('Exam',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
+                    ,fontSize: 25,),),
                 ),
                 Positioned(
-                  top: height/9.9,
-                  left: width/12,
+                  top: height/12,
+                  left: width/18,
                   child: InkWell(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
-
                     },
                     child: Container(
                       height: height/17,
-                      width: height/18,
+                      width: height/17,
                       decoration: BoxDecoration(border: Border.all(
                           color: Colors.grey
                       ),borderRadius: BorderRadius.circular(15),
@@ -56,105 +98,202 @@ class ExamPage extends StatelessWidget {
                       child: Icon(Icons.arrow_back_ios,color: Colors.white,),
                     ),
                   ),
-                )
+                ),
+
+              ],
+            ),
+
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 100),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExamTimetablePage(),));
+                  },
+                  child: IgnorePointer(
+                    ignoring: true, // Make non-clickable
+                    child: itemProfile('Exam Timetable', CupertinoIcons.book),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                InkWell(
+                  onTap: () async{
+                    await getExamData();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>ExamListPage() ,));
+                  },
+                  child: IgnorePointer(
+                    ignoring: true, // Make non-clickable
+                    child: itemProfile('Exam Result', CupertinoIcons.book),
+                  ),
+                ),
+                const SizedBox(height: 40),
+
               ],
             ),
           ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Center(
-                  child: Row(
-
-                    children: [
-                      ExamCard(
-                        title: "TimeTable",
-                        image: "lib/assets/timetable.png",
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExamTimetablePage(),
-                            ),
-                          );
-                        },
-                      ),
-                      ExamCard(
-                        title: "Term Exam",
-                        image: "lib/assets/exam.png",
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InternalMark(),
-                            ),
-                          );
-                        },
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-
-              Row(
-                children: [
-                  SizedBox(width:width/23 ,),
-                  ExamCard(
-                    title: "ReportCard",
-                    image: "lib/assets/reportcard.png",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReportCardPage(
-                            examResults: [
-                              ExamResult(
-                                subject: 'Maths',
-                                maxMark: 100,
-                                passMark: 40,
-                                marksObtained: 85,
-                              ),
-                              ExamResult(
-                                subject: 'Physics',
-                                maxMark: 100,
-                                passMark: 40,
-                                marksObtained: 75,
-                              ),
-                              ExamResult(
-                                subject: 'Chemistry',
-                                maxMark: 100,
-                                passMark: 40,
-                                marksObtained: 90,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  ExamCard(
-                    title: "Final Result",
-                    image: "lib/assets/finalresult.png",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FinalResultPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              )
-            ],
-          )
         ],
       ),
     );
   }
+  Widget itemProfile(String title, IconData iconData) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, 3),
+            color: Colors.indigoAccent.withOpacity(.3),
+            spreadRadius: 2,
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(title),
+        leading: Icon(iconData),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.grey),
+        tileColor: Colors.white,
+      ),
+
+    );
+
+  }
 }
+class ExamListPage extends StatelessWidget {
+  const ExamListPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
+
+    final ExamList=Provider.of<ExamProvider>(context);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          Container(
+            height: height / 4,
+            width: double.infinity,
+            color: Color(0xff6D4DBF),
+            child: Stack(
+              children: [
+                SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xf7E67D1), height: height, width: width),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: height / 35,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(100),
+                        topRight: Radius.circular(100),
+                      ),
+                    ),
+
+                  ),
+                ),
+                Positioned(
+                  top: height/11,right: width/2.3,
+                  child: Text('ExamResult',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
+                    ,fontSize: 25,),),
+                ),
+                Positioned(
+                  top: height/12,
+                  left: width/18,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: height/17,
+                      width: height/17,
+                      decoration: BoxDecoration(border: Border.all(
+                          color: Colors.grey
+                      ),borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Icon(Icons.arrow_back_ios,color: Colors.white,),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+                Container(
+                  height: height/2,
+                  child: ListView.builder(itemCount:ExamList.examList!.result.items.length,itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => InternalMark(id: ExamList.examList!.result.items[index].examId,),));
+                          },
+                          child: IgnorePointer(
+                            ignoring: true, // Make non-clickable
+                            child: itemProfile(ExamList.examList!.result.items[index].examName, CupertinoIcons.book),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    );
+
+                  },),
+                ),
+
+
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget itemProfile(String title, IconData iconData) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, 3),
+            color: Colors.indigoAccent.withOpacity(.3),
+            spreadRadius: 2,
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(title),
+        leading: Icon(iconData),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.grey),
+        tileColor: Colors.white,
+      ),
+
+    );
+
+  }
+}
+
+
+
 
 
 class ExamCard extends StatelessWidget {
@@ -233,7 +372,7 @@ class ExamTimetablePage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: height / 4,
+              height: height / 4.5,
               width: double.infinity,
               color: Color(0xff6D4DBF),
               child: Stack(
@@ -259,7 +398,7 @@ class ExamTimetablePage extends StatelessWidget {
                   ),
                   Positioned(
                     top: height / 11.5,
-                    right: width / 5.3,
+                    right: width / 4.5,
                     child: Text(
                       'Exam Timetable ',
                       style: TextStyle(
@@ -269,83 +408,7 @@ class ExamTimetablePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Positioned(
-                  //   top: height / 5.5,
-                  //   left: width / 7,
-                  //   child: Row(
-                  //     children: [
-                  //       SizedBox(
-                  //         width: width / 100,
-                  //       ),
-                  //       Container(
-                  //         height: width / 17,
-                  //         width: width / 6,
-                  //         decoration: BoxDecoration(
-                  //           borderRadius: BorderRadius.circular(20),
-                  //           color: Colors.blue,
-                  //         ),
-                  //         margin: EdgeInsets.symmetric(horizontal: 5),
-                  //         child: Center(
-                  //           child: Text(
-                  //             'Onam ',
-                  //             style: TextStyle(
-                  //               color: Colors.white,
-                  //               fontWeight: FontWeight.bold,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: width / 15,
-                  //       ),
-                  //       IgnorePointer(
-                  //         ignoring: true,
-                  //         child: Container(
-                  //           height: width / 17,
-                  //           width: width / 6,
-                  //           decoration: BoxDecoration(
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             color: Colors.grey,
-                  //           ),
-                  //           margin: EdgeInsets.symmetric(horizontal: 5),
-                  //           child: Center(
-                  //             child: Text(
-                  //               'X Mas ',
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: width / 15,
-                  //       ),
-                  //       IgnorePointer(
-                  //         ignoring: true,
-                  //         child: Container(
-                  //           height: width / 17,
-                  //           width: width / 6,
-                  //           decoration: BoxDecoration(
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             color: Colors.grey,
-                  //           ),
-                  //           margin: EdgeInsets.symmetric(horizontal: 5),
-                  //           child: Center(
-                  //             child: Text(
-                  //               'Annual ',
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+
                   Positioned(
                     top: height / 12.5,
                     left: width / 25,
@@ -390,7 +453,7 @@ class ExamTimetablePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'XA',
+                      'XB',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -425,7 +488,7 @@ class ExamTimetablePage extends StatelessWidget {
                     .toList(),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 02),
             Center(
               child: Column(
                 children: [
@@ -457,7 +520,6 @@ class ExamTimetablePage extends StatelessWidget {
                         color: isScrolled ? Colors.white : Colors.white,
                       ),
                     ),
-
                   ),
                   SizedBox(height: 10),
                   Table(
@@ -476,17 +538,52 @@ class ExamTimetablePage extends StatelessWidget {
 
 
 class InternalMark extends StatefulWidget {
+  InternalMark({super.key,required this.id});
+  final id;
+
+
+
+
+
   @override
   _InternalMarkState createState() => _InternalMarkState();
 }
 
-class _InternalMarkState extends State<InternalMark> {
+class _InternalMarkState extends State<InternalMark>  {
+
+
   int _selectedClass = 1;
   String _selectedSchool = 'ABC public school';
   String _selectedTerm = '2nd Term'; // Default selection
 
+
+
   @override
   Widget build(BuildContext context) {
+    final ExamList=Provider.of<ExamProvider>(context);
+
+    List<Map<String,dynamic>>examsSubjectMarks=[
+      for(int i=0;i<ExamList.examList!.result.items.length;i++)
+        if(widget.id==ExamList.examList!.result.items[i].examId)
+          for(int j=0;j<ExamList.examList!.result.items[i].markList.length;j++)
+            {"subjectId":ExamList.examList!.result.items[i].markList[j].subjectId,
+              "subjectName":ExamList.examList!.result.items[i].markList[j].subjectName,
+              "passMark":ExamList.examList!.result.items[i].markList[j].passMark,
+              "maximumMark":ExamList.examList!.result.items[i].markList[j].maximumMark,
+              "result":ExamList.examList!.result.items[i].markList[j].result,
+              "mark":ExamList.examList!.result.items[i].markList[j].mark,
+              "grade":ExamList.examList!.result.items[i].markList[j].grade,
+            }
+    ];
+    var Examname;
+    for(int i=0;i<ExamList.examList!.result.items.length;i++)
+      if(widget.id==ExamList.examList!.result.items[i].examId)
+        {
+          Examname=ExamList.examList!.result.items[i].examName;
+        }
+
+
+
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
     return Scaffold(
@@ -494,7 +591,7 @@ class _InternalMarkState extends State<InternalMark> {
       body: Column(
 
         children: [
-          Container( // Container for app bar
+          Container(  // Container for app bar
             height: height/4,
             width: double.infinity,
             color: Color(0xff6D4DBF),
@@ -511,88 +608,11 @@ class _InternalMarkState extends State<InternalMark> {
                   ),
                 ),
                 Positioned(
-                  top: height/11.5,right: width/5,
-                  child: Text('Class Test Result',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
+                  top: height/11,right: width/3.3,
+                  child: Text('Exam Result',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
                     ,fontSize: 25,),),
                 ),
 
-                // Positioned(
-                //   top: height / 5.5,
-                //   left: width / 7,
-                //   child: Row(
-                //     children: [
-                //       SizedBox(
-                //         width: width / 100,
-                //       ),
-                //       Container(
-                //         height: width / 17,
-                //         width: width / 6,
-                //         decoration: BoxDecoration(
-                //           borderRadius: BorderRadius.circular(20),
-                //           color: Colors.blue,
-                //         ),
-                //         margin: EdgeInsets.symmetric(horizontal: 5),
-                //         child: Center(
-                //           child: Text(
-                //             'Onam ',
-                //             style: TextStyle(
-                //               color: Colors.white,
-                //               fontWeight: FontWeight.bold,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: width / 15,
-                //       ),
-                //       IgnorePointer(
-                //         ignoring: true,
-                //         child: Container(
-                //           height: width / 17,
-                //           width: width / 6,
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(20),
-                //             color: Colors.grey,
-                //           ),
-                //           margin: EdgeInsets.symmetric(horizontal: 5),
-                //           child: Center(
-                //             child: Text(
-                //               'X Mas ',
-                //               style: TextStyle(
-                //                 color: Colors.white,
-                //                 fontWeight: FontWeight.bold,
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: width / 15,
-                //       ),
-                //       IgnorePointer(
-                //         ignoring: true,
-                //         child: Container(
-                //           height: width / 17,
-                //           width: width / 6,
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(20),
-                //             color: Colors.grey,
-                //           ),
-                //           margin: EdgeInsets.symmetric(horizontal: 5),
-                //           child: Center(
-                //             child: Text(
-                //               'Annual ',
-                //               style: TextStyle(
-                //                 color: Colors.white,
-                //                 fontWeight: FontWeight.bold,
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 Positioned(
                   top: height/13,
                   left: width/18,
@@ -606,7 +626,7 @@ class _InternalMarkState extends State<InternalMark> {
                     ),
                     child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ExamPage(),));
+                          Navigator.pop(context);
                         },
 
                         child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
@@ -618,7 +638,7 @@ class _InternalMarkState extends State<InternalMark> {
           SizedBox(height: 15),
           Center(
             child: Text(
-              'Onam Exam Result -  XA class',
+              Examname ,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -638,7 +658,6 @@ class _InternalMarkState extends State<InternalMark> {
           ),
           SizedBox(height: 25),
           Scrollbar(
-            thumbVisibility: true,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: SingleChildScrollView(
@@ -693,15 +712,9 @@ class _InternalMarkState extends State<InternalMark> {
 
                         ],
                       ),
-                      buildRow(['Maths', '50',  '30', 'B', ]),
-                      buildRow(['Physics', '50',  '35', 'B', ]),
-                      buildRow(['Chemistry', '50',  '39', 'B+', ]),
-                      buildRow(['Biology', '50',  '36', 'B+', ]),
-                      buildRow(['Malayalam', '50',  '42', 'A', ]),
-                      buildRow(['IT', '50',  '39', 'B+', ]),
-                      buildRow(['Hindi', '50',  '38', 'B+', ]),
-                      buildRow(['History', '50',  '38', 'B+', ]),
-                      buildRow(['Geography', '50',  '42', 'A', ]),
+                      for(int i=0;i<examsSubjectMarks.length;i++)
+                        buildRow([examsSubjectMarks[i]['subjectName'], examsSubjectMarks[i]['maximumMark'].toString(),  examsSubjectMarks[i]['mark'].toString(), (examsSubjectMarks[i]['grade']==1)?'A' : (examsSubjectMarks[i]['grade']==2)?'B':(examsSubjectMarks[i]['grade']==3)?'C':(examsSubjectMarks[i]['grade']==4)?'D':'E', ]),
+
                     ],
                   ),
                 ),
@@ -733,485 +746,146 @@ class _InternalMarkState extends State<InternalMark> {
     );
   }
 }
-
-class ReportCardPage extends StatelessWidget {
-  final List<ExamResult> examResults;
-
-  const ReportCardPage({required this.examResults, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: height / 4,
-              width: double.infinity,
-              color: Color(0xff6D4DBF),
-              child: Stack(
-                children: [
-                  SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xff7E67D1), height: height, width: width),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: height / 35,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.print),
-                            onPressed: () {
-                              // Handle printing action here
-                              printReportCard();
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: height / 10,
-                    right: width / 4,
-                    child: Text(
-                      'Report card ',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
-                    ),
-                  ),
-                  Positioned(
-                    top: height / 11,
-                    left: width / 18,
-                    child: Container(
-                      height: height / 17,
-                      width: height / 17,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ExamPage(),));
-                        },
-                        child: Icon(Icons.arrow_back_ios, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 6),
-            Center(
-              child: Text(
-                'ABC Public School',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: height / 106),
-            Center(
-              child: Text(
-                'Abc road Vyttila',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: height / 150),
-            Center(
-              child: Text(
-                'Ernakulam,Vyttila',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 2),
-            Center(
-              child: Text(
-                'abcpublic@gmail.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 1),
-            Center(
-              child: Text(
-                'Onam Exam Result',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 1),
-            Center(
-              child: Text(
-                'Class:XA',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: width/25,),
-                Text(
-                  'Student Name : Anu Emmanuel',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: width/25,),
-                Text(
-                  'Roll No : 22',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 6),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Table(
-                      border: TableBorder.all(),
-                      columnWidths: {
-                        0: FractionColumnWidth(0.25),
-                        1: FractionColumnWidth(0.15),
-                        2: FractionColumnWidth(0.15),
-                        3: FractionColumnWidth(0.15),
-                      },
-                      children: [
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Subject',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Total',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Score',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Grade',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        buildRow(['Maths', '50',  '30', 'B', ]),
-                        buildRow(['Physics', '50',  '35', 'B', ]),
-                        buildRow(['Chemistry', '50',  '39', 'B+', ]),
-                        buildRow(['Biology', '50',  '36', 'B+', ]),
-                        buildRow(['Malayalam', '50',  '42', 'A', ]),
-                        buildRow(['IT', '50',  '39', 'B+', ]),
-                        buildRow(['Hindi', '50',  '38', 'B+', ]),
-                        buildRow(['History', '50',  '38', 'B+', ]),
-                        buildRow(['Geography', '50',  '42', 'A', ]),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Table(
-                      border: TableBorder.all(),
-                      columnWidths: {
-                        0: FractionColumnWidth(0.25),
-                        1: FractionColumnWidth(0.15),
-                        2: FractionColumnWidth(0.15),
-                        3: FractionColumnWidth(0.15),
-                      },
-                      children: [
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Subject',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Center(
-                                child: Text(
-                                  'Total',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                        buildRow(['Total', '450', ]),
-                        buildRow(['Score', '377', ]),
-                        buildRow(['Percentage', '75%',]),
-                        buildRow(['Grade', 'B+',]),
-                        // Add more rows here if needed
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-
-                        Text('A+ Excellent',style: TextStyle(fontWeight: FontWeight.bold)),
-
-                        Text('A Outstanding',style: TextStyle(fontWeight: FontWeight.bold)),
-
-                        Text('B VeryGood',style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],),
-
-
-                  ),
-
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-
-                        Text('C Good',style: TextStyle(fontWeight: FontWeight.bold)),
-
-                        Text('D Satisfactory',style: TextStyle(fontWeight: FontWeight.bold)),
-
-                        Text('E Fail',style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],),
-
-
-                  ),
-
-
-
-
-                ],
-              ),
-            ),
-           SizedBox(height: height/15,)
-           // Add more empty space here
-          ],
-        ),
-      ),
-    );
-  }
-
-  TableRow buildRow(List<String> cells, {bool isHeader = false}) {
-    return TableRow(
-      children: cells.map((cell) {
-        final style = TextStyle(
-          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-          fontSize: 15,
-        );
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: Center(
-            child: Text(
-              cell,
-              style: style,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  void printReportCard() {
-    // Implement your printing logic here
-    print("Printing report card...");
-  }
-}
-
-class ExamResult {
-  final String subject;
-  final int maxMark;
-  final int passMark;
-  final int marksObtained;
-
-  ExamResult({
-    required this.subject,
-    required this.maxMark,
-    required this.passMark,
-    required this.marksObtained,
-  });
-}
+//
+// class ExamResult {
+//   final String subject;
+//   final int maxMark;
+//   final int passMark;
+//   final int marksObtained;
+//
+//   ExamResult({
+//     required this.subject,
+//     required this.maxMark,
+//     required this.passMark,
+//     required this.marksObtained,
+//   });
+// }
 
 
 
 
 
-class FinalResultPage extends StatelessWidget {
-  const FinalResultPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var height=MediaQuery.of(context).size.height;
-    var width=MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: height/4,
-              width: double.infinity,
-              color: Color(0xff6D4DBF),
-             child: Stack(
-               children: [
-                 SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xff7E67D1), height: height, width: width),
-                 Align(alignment: Alignment.bottomCenter
-                   ,child: Container(
-                     height: height/35,
-                     width: double.infinity,
-                     decoration: BoxDecoration(color:Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(100),
-                       topRight: Radius.circular(100),
-                     )),
-                   ),
-                 ),
-                 Positioned(
-                   top: height/10,right: width/3,
-                   child: Text('Final Result',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
-                     ,fontSize: 25,),),
-                 ),
-
-                 Positioned(
-                   top: height/11.5,
-                   left: width/18,
-                   child: Container(
-                     height: height/17,
-                     width: height/17,
-                     decoration: BoxDecoration(border: Border.all(
-
-                         color: Colors.grey
-                     ),borderRadius: BorderRadius.circular(15),
-                     ),
-                     child: InkWell(
-                         onTap: () {
-                           Navigator.push(context, MaterialPageRoute(builder: (context) => ExamPage(),));
-                         },
-
-                         child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
-                   ),
-                 ),
-               ],
-             ),
-            ),
-
-            // Centered texts
-
-
-            // First table
-            Table(
-              border: TableBorder.all(),
-              columnWidths: {
-                0: FractionColumnWidth(0.20),
-                1: FractionColumnWidth(0.20),
-                2: FractionColumnWidth(0.20),
-                3: FractionColumnWidth(0.20),
-                4: FractionColumnWidth(0.20),
-                5: FractionColumnWidth(0.20),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    TableCell(child: Center(child: Text('Subject', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    TableCell(child: Center(child: Text('1st Term', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    TableCell(child: Center(child: Text('2nd Term', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    TableCell(child: Center(child: Text('Final', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    TableCell(child: Center(child: Text(''
-                        'Score', style: TextStyle(fontWeight: FontWeight.bold)))),
-                    TableCell(child: Center(child: Text('Total', style: TextStyle(fontWeight: FontWeight.bold)))),
-                  ],
-                ),
-                // Add your rows here
-                buildTableRow(['Maths', '20', '40', '20', '80', '100']),
-                buildTableRow(['Physics', '30', '20', '30', '80', '100']),
-                buildTableRow(['Chemistry', '20', '40', '25', '85', '100']),
-                buildTableRow(['Biology', '25', '25', '30', '80', '100']),
-                buildTableRow(['Malayalam', '25', '35', '30', '80', '100']),
-                buildTableRow(['English', '25', '26', '40', '91', '100']),
-                buildTableRow(['History', '25', '25', '40', '90', '100']),
-                buildTableRow(['Geography', '25', '23', '31', '95', '100']),
-                buildTableRow(['IT', '25', '35', '30', '75', '90']),
-                // Add more rows as needed
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Second table
-
-          ],
-        ),
-      ),
-    );
-  }
-
-  TableRow buildTableRow(List<String> data) {
-    return TableRow(
-      children: data.map((cell) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Text(
-              cell,
-              style: TextStyle(fontWeight: FontWeight.normal),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
+// class FinalResultPage extends StatelessWidget {
+//   const FinalResultPage({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     var height=MediaQuery.of(context).size.height;
+//     var width=MediaQuery.of(context).size.width;
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: SingleChildScrollView(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.start,
+//           children: [
+//             Container(
+//               height: height/4,
+//               width: double.infinity,
+//               color: Color(0xff6D4DBF),
+//               child: Stack(
+//                 children: [
+//                   SquareBox(color1: Color(0xff6D4DBF), color2: Color(0xff7E67D1), height: height, width: width),
+//                   Align(alignment: Alignment.bottomCenter
+//                     ,child: Container(
+//                       height: height/35,
+//                       width: double.infinity,
+//                       decoration: BoxDecoration(color:Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(100),
+//                         topRight: Radius.circular(100),
+//                       )),
+//                     ),
+//                   ),
+//                   Positioned(
+//                     top: height/10,right: width/3,
+//                     child: Text('Final Result',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold
+//                       ,fontSize: 25,),),
+//                   ),
+//                   Positioned(
+//                     top: height/11.5,
+//                     left: width/18,
+//                     child: Container(
+//                       height: height/17,
+//                       width: height/17,
+//                       decoration: BoxDecoration(border: Border.all(
+//
+//                           color: Colors.grey
+//                       ),borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       child: InkWell(
+//                           onTap: () {
+//                             Navigator.push(context, MaterialPageRoute(builder: (context) => ExamPage(),));
+//                           },
+//
+//                           child: Icon(Icons.arrow_back_ios,color: Colors.white,)
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//
+//             // Centered texts
+//
+//
+//             // First table
+//             Table(
+//               border: TableBorder.all(),
+//               columnWidths: {
+//                 0: FractionColumnWidth(0.20),
+//                 1: FractionColumnWidth(0.20),
+//                 2: FractionColumnWidth(0.20),
+//                 3: FractionColumnWidth(0.20),
+//                 4: FractionColumnWidth(0.20),
+//                 5: FractionColumnWidth(0.20),
+//               },
+//               children: [
+//                 TableRow(
+//                   children: [
+//                     TableCell(child: Center(child: Text('Subject', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                     TableCell(child: Center(child: Text('1st Term', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                     TableCell(child: Center(child: Text('2nd Term', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                     TableCell(child: Center(child: Text('Final', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                     TableCell(child: Center(child: Text(''
+//                         'Score', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                     TableCell(child: Center(child: Text('Total', style: TextStyle(fontWeight: FontWeight.bold)))),
+//                   ],
+//                 ),
+//                 // Add your rows here
+//                 buildTableRow(['Maths', '20', '40', '20', '80', '100']),
+//                 buildTableRow(['Physics', '30', '20', '30', '80', '100']),
+//                 buildTableRow(['Chemistry', '20', '40', '25', '85', '100']),
+//                 buildTableRow(['Biology', '25', '25', '30', '80', '100']),
+//                 buildTableRow(['Malayalam', '25', '35', '30', '80', '100']),
+//                 buildTableRow(['English', '25', '26', '40', '91', '100']),
+//                 buildTableRow(['History', '25', '25', '40', '90', '100']),
+//                 buildTableRow(['Geography', '25', '23', '31', '95', '100']),
+//                 buildTableRow(['IT', '25', '35', '30', '75', '90']),
+//                 // Add more rows as needed
+//               ],
+//             ),
+//
+//             SizedBox(height: 20),
+//
+//             // Second table
+//
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   TableRow buildTableRow(List<String> data) {
+//     return TableRow(
+//         children: data.map((cell) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Center(
+//               child: Text(
+//                 cell,
+//                 style: TextStyle(fontWeight: FontWeight.normal),
+//               ),
+//             ),
+//           );
+//         }).toList(),
+//        );
+//    }
+// }

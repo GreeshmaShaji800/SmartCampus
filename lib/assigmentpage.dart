@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:smartcampusloginpage/assigment.dart';
 import 'package:smartcampusloginpage/squrebox.dart';
 import 'package:flutter/cupertino.dart';
-void main() {       
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AssignmentPage1(),
-      
-    );
-  }
-}
 
 class AssignmentPage1 extends StatelessWidget {
+  AssignmentPage1({super.key,required this.topic,required this.subjectName,required this.id,required this.details,required this.startDate,required this.submissionDate,required this.submitted});
+  final topic;
+  final subjectName;
+  final id;
+  final details;
+  final startDate;
+  final submissionDate;
+  final submitted;
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -71,7 +67,7 @@ class AssignmentPage1 extends StatelessWidget {
                       left: width / 12,
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => BiologyPage(),));
+                          Navigator.pop(context);
                         },
                         child: Container(
                           height: height / 17,
@@ -91,7 +87,80 @@ class AssignmentPage1 extends StatelessWidget {
                 ),
               ),
               // Rest of the AssignmentPage content
-              buildContent(context),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subjectName,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: height/25),
+                    Text(
+                      DateFormat('dd/MM/yyyy').format(
+                          DateTime.parse(submissionDate.toString())),
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: height/25),
+                    Container(
+                      color: Colors.grey[300],
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'Notes:',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(height: height/25),
+                    Text(
+                      'Questions:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height:height/40),
+                    ListTile(
+                      title: Text(topic),
+                    ),
+
+                    SizedBox(height: height/16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            DateFormat('dd/MM/yyyy').format(
+                                DateTime.parse(submissionDate.toString())),
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             ],
           ),
         ),
@@ -99,82 +168,5 @@ class AssignmentPage1 extends StatelessWidget {
     );
   }
 
-  Widget buildContent(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
 
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Biology',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: height/25),
-          Text(
-            'March 5, 2024, 11:30 AM',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: height/25),
-          Container(
-            color: Colors.grey[300], 
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Notes:',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          SizedBox(height: height/25),
-          Text(
-            'Questions:',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height:height/40),
-          ListTile(
-            title: Text('1) What do you mean by Amoeba?'),
-          ),
-          ListTile(
-            title: Text('2) What is an organism?'),
-          ),
-          SizedBox(height: height/16),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Text(
-                  'Due Date: March 8, 2024, 11:30 AM',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

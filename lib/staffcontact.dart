@@ -1,74 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smartcampusloginpage/controller/provider.dart';
 import 'package:smartcampusloginpage/homescreen.dart';
 import 'package:smartcampusloginpage/squrebox.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ContactPage extends StatelessWidget {
+class ContactPage extends StatefulWidget {
+
+  @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
+  @override
+  void initState() {
+    final staff=Provider.of<staffprovider>(context,listen: false);
+    staff.getStaffData();
+    // TODO: implement initState
+    super.initState();
+  }
   final List<Map<String, dynamic>> workers = [
-    {
-      'name': 'John Doe',
-      'class': 'Mathematics',
-      'designation': 'Teacher',
-      'phone': '9633277629',
-    },
-    {
-      'name': 'Jane Smith',
-      'class': 'Science',
-      'designation': 'Teacher',
-      'phone': '987-654-3210',
-    },
-    {
-      'name': 'Mahima Nambiar',
-      'class': 'Physics',
-      'designation': 'Teacher',
-      'phone': '9987654320',
-    },
-    {
-      'name': 'Alice Johnson',
-      'class': 'English',
-      'designation': 'Teacher',
-      'phone': '1234567890',
-    },
-    {
-      'name': 'Bob Williams',
-      'class': 'History',
-      'designation': 'Teacher',
-      'phone': '9876543210',
-    },
-    {
-      'name': 'Ella Brown',
-      'class': 'Chemistry',
-      'designation': 'Teacher',
-      'phone': '8765432109',
-    },
-    {
-      'name': 'David Lee',
-      'class': 'Biology',
-      'designation': 'Teacher',
-      'phone': '9087654321',
-    },
-    {
-      'name': 'Sarah Miller',
-      'class': 'Geography',
-      'designation': 'Teacher',
-      'phone': '7890123456',
-    },
-    {
-      'name': 'Michael Davis',
-      'class': 'Art',
-      'designation': 'Teacher',
-      'phone': '8901234567',
-    },
-    {
-      'name': 'Olivia Wilson',
-      'class': 'Music',
-      'designation': 'Teacher',
-      'phone': '9012345678',
-    },
-    // Add more workersn as needed
+    {'phone': '9633277629',},
+    {'phone': '987-654-3210',},
+    {'phone': '9987654320',},
+    {'phone': '9234567890',},
+    {'phone': '9876543210',},
+    {'phone': '8765432109',},
+    {'phone': '9087654321',},
+    {'phone': '7890123456',},
+    {'phone': '8901234567',},
+    {'phone': '9012345678',},
   ];
 
+
   void _makePhoneCall(String phoneNumber) async {
+
     String telScheme = 'tel:$phoneNumber';
     if (await canLaunch(telScheme)) {
       await launch(telScheme);
@@ -136,9 +102,9 @@ class ContactPage extends StatelessWidget {
 
             )
           ),
-          Expanded(
+          Consumer<staffprovider>(builder: (context, staffProvider, child) => Expanded(
             child: ListView.builder(
-              itemCount: workers.length,
+              itemCount: staffProvider.data!.result.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   padding: EdgeInsets.all(8.0),
@@ -152,12 +118,12 @@ class ContactPage extends StatelessWidget {
                       Icons.person,
                       color: Colors.blue,
                     ),
-                    title: Text(workers[index]['name']),
+                    title: Text(staffProvider.data!.result[index].name),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Class: ${workers[index]['class']}'),
-                        Text('Designation: ${workers[index]['designation']}'),
+                        Text('Subject: ${staffProvider.data!.result[index].teachingSubjectName}'),
+                        Text('Designation: ${staffProvider.data!.result[index].isTeachingStaff ? "Teaching Staff":"Non Teaching Staff"}'),
                         Text('Phone: ${workers[index]['phone']}'),
                       ],
                     ),
@@ -180,7 +146,7 @@ class ContactPage extends StatelessWidget {
                 );
               },
             ),
-          ),
+          ),)
         ],
       ),
     );

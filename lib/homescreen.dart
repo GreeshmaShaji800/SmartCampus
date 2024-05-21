@@ -3,11 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:smartcampusloginpage/assigment.dart';
+import 'package:smartcampusloginpage/controller/provider.dart';
 import 'package:smartcampusloginpage/events.dart';
 import 'package:smartcampusloginpage/leaveapplication.dart';
-import 'package:smartcampusloginpage/profilpage.dart';
 import 'package:smartcampusloginpage/provider_class.dart';
 import 'package:smartcampusloginpage/squrebox.dart';
 import 'package:smartcampusloginpage/staffcontact.dart';
@@ -15,6 +16,8 @@ import 'package:smartcampusloginpage/timetable.dart';
 import 'package:smartcampusloginpage/widget.dart';
 import 'package:smartcampusloginpage/widget2.dart';
 import 'package:smartcampusloginpage/widget5.dart';
+
+import 'controller/eventprovider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -121,43 +124,78 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  'See all',
-                  style: TextStyle(color: Color(0xff6D4DBF)),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Assignmentpage(),));
+                  },
+
+
+                  child: Text(
+                    'See all',
+                    style: TextStyle(color: Color(0xff6D4DBF)),
+                  ),
                 ),
               ),
             ],
           ),
-          Container(
+          Consumer<userprovide>(builder: (context, assignmentProvider, child) => Container(
             height: height / 5.3,
             width: double.infinity,
             //color: Colors.grey,
 
-            child: CarouselSlider(
+            child:(assignmentProvider.assignment1==null) ?CarouselSlider(
+              items: [
+                SliderPages(
+                    subject: "SubjectName",
+                    topic:  "Topic",
+                    duedate: "dd/mm/yyyy",
+                    color1:  Color(0xff9F7FEE),
+                    color2:  Color(0xff8167D5)
+                ),
+
+              ],
+
+              //Slider Container properties
+              options: CarouselOptions(
+                height: 180.0,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                aspectRatio: 16 / 9,
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enableInfiniteScroll: true,
+                autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                viewportFraction: 1.0,
+              ),
+            ): CarouselSlider(
               items: [
                 //1st Image of Slider
-
-                SliderPages(
-                  subject: 'English',
-                  topic: 'Write an essay on Global Warming',
-                  duedate: '06-06-2024',
-                  color1: Color(0xff9F7FEE),
-                  color2: Color(0xff8167D5),
-                ),
-                SliderPages(
-                  subject: 'Maths',
-                  topic: 'Trigonometry',
-                  duedate: '06-06-2024',
-                  color1: Color(0xffFEA0B2),
-                  color2: Color(0xffFB7E9C),
-                ),
-                SliderPages(
-                  subject: 'Science',
-                  topic: 'Thermodynamics',
-                  duedate: '06-06-2024',
-                  color1: Color(0xffA2DBF9),
-                  color2: Color(0xff92D3F1),
-                ),
+                for (var i = 0; i <assignmentProvider.assignmentdata2.length; i++)
+                  if ((assignmentProvider.assignmentdata2[i]['submissionDate'])
+                      .isAfter(DateTime.now()))
+                    SliderPages(
+                      subject: assignmentProvider.assignmentdata2[i]['subjectName'],
+                      topic:  assignmentProvider.assignmentdata2[i]['title'],
+                      duedate:  DateFormat('dd/MM/yyyy').format(
+                          DateTime.parse(assignmentProvider.assignmentdata2[i]['submissionDate'].toString())),
+                      color1: (i % 3 == 0) ? Color(0xff9F7FEE) : (i % 3 == 1) ? Color(0xffFEA0B2) :
+                      (i % 3 == 2) ?Color(0xffA2DBF9) : Colors.white,
+                      color2:(i % 3 == 0) ?  Color(0xff8167D5): (i % 3 == 1) ?  Color(0xffFB7E9C) :
+                      (i % 3 == 2) ?Color(0xff92D3F1) : Colors.white,
+                    ),
+                // SliderPages(
+                //   subject: 'Maths',
+                //   topic: 'Trigonometry',
+                //   duedate: '06-06-2024',
+                //   color1: Color(0xffFEA0B2),
+                //   color2: Color(0xffFB7E9C),
+                // ),
+                // SliderPages(
+                //   subject: 'Science',
+                //   topic: 'Thermodynamics',
+                //   duedate: '06-06-2024',
+                //   color1: Color(0xffA2DBF9),
+                //   color2: Color(0xff92D3F1),
+                // ),
 
                 //2nd Image of Slider
               ],
@@ -174,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                 viewportFraction: 1.0,
               ),
             ),
-          ),
+          ),),
           Container(
             height: height / 4.6,
             width: double.infinity,
@@ -355,7 +393,10 @@ class _HomePageState extends State<HomePage> {
                         width: width / 40,
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async{
+                          final staffProvider=Provider.of<staffprovider>(context,listen: false);
+                          await staffProvider.getStaffData();
+
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage(),));
 
                         },
@@ -620,25 +661,39 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: height / 10,
                   //   color: Colors.yellow,
-                  child: CarouselSlider(
-                    items: [
-                      EventContainer(event: 'Sports Day', date: '01/06/2024', color1:  Color(0xff8167D5), color2:Color(0xff8167D5)),
-                      EventContainer(event: 'Science Exhibition', date: '10/06/2024', color1: Color(0xffFB7E9C), color2: Color(0xffFB7E9C)),
-                      EventContainer(event: 'Arts Day', date: '10/06/2024', color1:  Color(0xff92D3F1), color2:  Color(0xff92D3F1))
-                    ],
+                  child: Consumer<EventProvider>(builder: (context, EventProvider, child) => Container(
+                      height: height / 10,
+                      //   color: Colors.yellow,
+                      child: CarouselSlider(
+                        items: [
+                          for(var i=0;i<EventProvider.data!.result.items.length;i++)
+                            if ((EventProvider.data!.result.items[i].start).isAfter(DateTime.now()))
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Events(),));
+                                },
 
-                    //Slider Container properties
-                    options: CarouselOptions(
-                      height: 180.0,
-                      enlargeCenterPage: true,
-                      autoPlay: false,
-                      aspectRatio: 16 / 9,
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enableInfiniteScroll: true,
-                      autoPlayAnimationDuration: Duration(milliseconds: 1000),
-                      viewportFraction: 1.0,
-                    ),
-                  ),
+                                   child: EventContainer(event: EventProvider.data!.result.items[i].title, date: DateFormat('dd/MM/yyyy').format(DateTime.parse(EventProvider.data!.result.items[i].start.toString())), color1: (i%3==0) ? Color(0xff8167D5) :(i%3==1) ?Color(0xffFB7E9C):(i%3==2)?Color(0xff92D3F1):Colors.white, color2:(i%3==0) ? Color(0xff8167D5) :(i%3==1) ?Color(0xffFB7E9C):(i%3==2)?Color(0xff92D3F1):Colors.white)),
+
+
+                          // EventContainer(event: 'Science Exhibition', date: '10/06/2024', color1: Color(0xffFB7E9C), color2: Color(0xffFB7E9C)),
+                          // EventContainer(event: 'Arts Day', date: '10/06/2024', color1:  Color(0xff  92D3F1), color2:  Color(0xff92D3F1))
+                        ],
+
+                        //Slider Container properties
+                        options: CarouselOptions(
+                          height: 180.0,
+                          enlargeCenterPage: true,
+                          autoPlay: false,
+                          aspectRatio: 16 / 9,
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          enableInfiniteScroll: true,
+                          autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                          viewportFraction: 1.0,
+                        ),
+                      ),
+                      ),)
+                  ,
                 )
               ],
             ),
